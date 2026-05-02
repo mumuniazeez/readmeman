@@ -7,9 +7,10 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "~/components/ui/resizable";
-import EditorPanel from "~/components/EditorPanel";
+import EditorPanel from "~/components/editor/EditorPanel";
 import { ScrollArea, ScrollBar } from "~/components/ui/scroll-area";
 import { useState } from "react";
+import PreviewPanel from "~/components/editor/PreviewPanel";
 
 export function meta({}: Route.MetaArgs): Route.MetaDescriptors {
   return [
@@ -85,7 +86,9 @@ export default function Editor() {
             </div>
           </ResizablePanel>
           <ResizableHandle withHandle />
-          <ResizablePanel defaultSize={"50%"} className="p-4"></ResizablePanel>
+          <ResizablePanel defaultSize={"50%"} minSize={"30%"}>
+            <PreviewPanel />
+          </ResizablePanel>
         </ResizablePanelGroup>
       </div>
     </div>

@@ -7,12 +7,12 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "./ui/dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
-import { ScrollArea, ScrollBar } from "./ui/scroll-area";
-import { Badge } from "./ui/badge";
+} from "../ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import { ScrollArea, ScrollBar } from "../ui/scroll-area";
+import { Badge } from "../ui/badge";
 import { X } from "lucide-react";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 
 const SELECTED_BADGES = [
   // Downloads

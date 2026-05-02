@@ -5,22 +5,22 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "./ui/select";
+} from "../ui/select";
 import templates from "~/template";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "./ui/accordion";
-import { Field, FieldGroup } from "./ui/field";
-import { Label } from "./ui/label";
-import { Input } from "./ui/input";
-import { Button } from "./ui/button";
+} from "../ui/accordion";
+import { Field, FieldGroup } from "../ui/field";
+import { Label } from "../ui/label";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
 import { Plus, X } from "lucide-react";
-import { Textarea } from "./ui/textarea";
+import { Textarea } from "../ui/textarea";
 import BadgePickerModal from "./BadgePickerModal";
-import { Switch } from "./ui/switch";
+import { Switch } from "../ui/switch";
 
 export default function EditorPanel() {
   return (
@@ -44,7 +44,11 @@ export default function EditorPanel() {
         </Select>
       </div>
       <div className="w-full">
-        <Accordion type="multiple" className="space-y-3 border-none">
+        <Accordion
+          type="multiple"
+          className="space-y-3 border-none"
+          defaultValue={["header",  "about"]}
+        >
           {/* Project Header */}
           <AccordionItem
             value="header"
