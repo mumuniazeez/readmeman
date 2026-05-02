@@ -27,23 +27,6 @@ export default function PreviewPanel() {
     usageInstallation,
   } = editorStore;
 
-  const data: TemplateData = {
-    aboutProject,
-    acknowledgements,
-    badges,
-    codeExample,
-    contributing,
-    description,
-    features,
-    includeCodeExample,
-    installation,
-    license,
-    logoUrl,
-    prerequisites,
-    projectName,
-    techStack,
-    usageInstallation,
-  };
 
   const generateMarkdown = (
     state: ReturnType<typeof useEditorStore.getState>,
@@ -57,11 +40,11 @@ ${state.logoUrl ? `![Project Logo](${state.logoUrl})` : ""}
 
 ${state.aboutProject}
 
-<div align="center" class="flex flex-wrap">
+${state.badges.length !== 0 ? `<div align="center" class="flex flex-wrap">
   ${state.badges.map(
     (badge) => `<img src="${badge.image}" alt="${badge.name}" />`,
   )}
-</div>
+</div>` : ""}
 
 ## 🚀 Features
 

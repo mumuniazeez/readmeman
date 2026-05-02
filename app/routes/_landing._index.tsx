@@ -58,12 +58,18 @@ export default function Home({ loaderData: features }: Route.ComponentProps) {
         <div
           id="display"
           className="w-[80%] bg-foreground border-zinc-800 border-4 mt-20 rounded-3xl h-[500px] shadow-xl shadow-primary/5"
-        ></div>
+        >
+          <img
+            src="/editor.png"
+            className="w-full h-full  rounded-3xl"
+            alt="Editor"
+          />
+        </div>
       </section>
 
       <section
         id="feature-section"
-        className="my-20 flex items-center justify-center gap-5"
+        className="my-20 grid grid-col-1 md:grid-cols-3 items-center justify-center gap-5"
       >
         {features.map((feature, idx) => (
           <FeatureCard key={idx} feature={feature} />

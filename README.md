@@ -1,87 +1,55 @@
-# Welcome to React Router!
-
-A modern, production-ready template for building full-stack React applications using React Router.
-
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/remix-run/react-router-templates/tree/main/default)
-
-## Features
-
-- 🚀 Server-side rendering
-- ⚡️ Hot Module Replacement (HMR)
-- 📦 Asset bundling and optimization
-- 🔄 Data loading and mutations
-- 🔒 TypeScript by default
-- 🎉 TailwindCSS for styling
-- 📖 [React Router docs](https://reactrouter.com/)
-
-## Getting Started
-
-### Installation
-
-Install the dependencies:
-
-```bash
-npm install
-```
-
-### Development
-
-Start the development server with HMR:
-
-```bash
-npm run dev
-```
-
-Your application will be available at `http://localhost:5173`.
-
-## Building for Production
-
-Create a production build:
-
-```bash
-npm run build
-```
-
-## Deployment
-
-### Docker Deployment
-
-To build and run using Docker:
-
-```bash
-docker build -t my-app .
-
-# Run the container
-docker run -p 3000:3000 my-app
-```
-
-The containerized application can be deployed to any platform that supports Docker, including:
-
-- AWS ECS
-- Google Cloud Run
-- Azure Container Apps
-- Digital Ocean App Platform
-- Fly.io
-- Railway
-
-### DIY Deployment
-
-If you're familiar with deploying Node applications, the built-in app server is production-ready.
-
-Make sure to deploy the output of `npm run build`
-
-```
-├── package.json
-├── package-lock.json (or pnpm-lock.yaml, or bun.lockb)
-├── build/
-│   ├── client/    # Static assets
-│   └── server/    # Server-side code
-```
-
-## Styling
-
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever CSS framework you prefer.
+# ReadmeMan
 
 ---
 
-Built with ❤️ using React Router.
+A readme file generator.
+
+<img src="public/landingpage.png" alt="Landing Page Screenshot">
+
+This project allows you to generate to generate readme files through `form`. You select a template and then fill in the form then download or copy your readme file
+
+<div align="center" class="flex flex-wrap">
+  <img src="https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white" alt="TypeScript" /> <img src="https://img.shields.io/badge/React-20232A?logo=react&logoColor=61DAFB" alt="React" /> <img src="https://img.shields.io/badge/Node.js-43853D?logo=node.js&logoColor=white" alt="Node.js" /> <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="MIT License" />
+</div>
+
+## 🚀 Features
+
+- Rich Markdown Display
+
+- Readme Format Templates
+
+- Real-time Update as you type
+
+## 🛠 Tech Stack
+
+- React
+
+- React Router
+
+- TailwindCSS
+
+- Shadcn
+
+## 📋 Prerequisites
+
+Nodejs, Docker
+
+## 📦 Installation
+
+```bash
+git clone repo && npm install
+```
+
+## 💻 Usage
+
+```bash
+git clone repo && npm install && npm run dev
+```
+
+## 🤝 Contributing
+
+Contributions are welcome! Please open an issue or submit a PR.
+
+## 📄 License
+
+MIT

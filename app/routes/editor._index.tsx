@@ -12,6 +12,7 @@ import { ScrollArea, ScrollBar } from "~/components/ui/scroll-area";
 import { useState } from "react";
 import PreviewPanel from "~/components/editor/PreviewPanel";
 import { useEditorStore } from "~/stores/useEditorStore";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 
 export function meta({}: Route.MetaArgs): Route.MetaDescriptors {
   return [
@@ -69,10 +70,30 @@ export default function Editor() {
           </Button> */}
         </div>
       </header>
-      <div className="editor-container flex flex-1 overflow-hidden">
+
+      {/* Mobile View */}
+
+      <div className="editor-container md:hidden flex-1 p-3">
+        <Tabs className="w-full" defaultValue="editor">
+          <TabsList className="w-full">
+            <TabsTrigger value="editor">Editor</TabsTrigger>
+            <TabsTrigger value="preview">Preview</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="editor">
+            <EditorPanel />
+          </TabsContent>
+          <TabsContent value="preview">
+            <PreviewPanel />
+          </TabsContent>
+        </Tabs>
+      </div>
+
+      {/* Desktop View */}
+      <div className="hidden editor-container md:flex flex-1 overflow-hidden">
         <ResizablePanelGroup orientation="horizontal" className="h-full">
           <ResizablePanel defaultSize={"50%"} minSize={"30%"}>
-            <div className="h-full flex flex-col">
+            <div className="h-full flex flex-col px-3">
               <div className="flex-1 overflow-auto">
                 <EditorPanel />
               </div>
