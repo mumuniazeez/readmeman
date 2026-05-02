@@ -10,9 +10,10 @@ import {
 } from "../ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
-import { Badge } from "../ui/badge";
+import { Badge as BadgeComponent } from "../ui/badge";
 import { X } from "lucide-react";
 import { Button } from "../ui/button";
+import { useEditorStore, type Badge } from "~/stores/useEditorStore";
 
 const SELECTED_BADGES = [
   // Downloads
@@ -224,6 +225,18 @@ export default function BadgePickerModal({
 }: {
   children: JSX.Element;
 }) {
+  const editorStore = useEditorStore();
+
+  const toggleBadge = (badge: Badge) => {
+    const badgeExist = editorStore.badges.find((b) => (b.image === badge.image));
+    if (badgeExist) {
+      editorStore.setBadges(
+        editorStore.badges.filter((b) => b.image !== badge.image),
+      );
+    } else {
+      editorStore.addBadge(badge);
+    }
+  };
   return (
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
@@ -251,8 +264,12 @@ export default function BadgePickerModal({
                 {SAMPLE_BADGES.map((badge, idx) => (
                   <button
                     key={idx}
-                    // onClick={() => toggleBadge(badge.image)}
-                    className={`p-3 rounded-lg border transition-all ${"border-[#2A2A2E] hover:border-[#5B6CFF]/50"}`}
+                    onClick={() => toggleBadge(badge)}
+                    className={`p-3 rounded-lg border transition-all ${
+                      editorStore.badges.find((b) => b.image === badge.image)
+                        ? "border-[#5B6CFF] bg-[#5B6CFF]/10"
+                        : "border-[#2A2A2E] hover:border-[#5B6CFF]/50"
+                    }`}
                   >
                     <img
                       src={badge.image}
@@ -274,8 +291,12 @@ export default function BadgePickerModal({
                   (badge, idx) => (
                     <button
                       key={idx}
-                      // onClick={() => toggleBadge(badge.image)}
-                      className={`p-3 rounded-lg border transition-all ${"border-[#2A2A2E] hover:border-[#5B6CFF]/50"}`}
+                      onClick={() => toggleBadge(badge)}
+                      className={`p-3 rounded-lg border transition-all ${
+                        editorStore.badges.find((b) => b.image === badge.image)
+                          ? "border-[#5B6CFF] bg-[#5B6CFF]/10"
+                          : "border-[#2A2A2E] hover:border-[#5B6CFF]/50"
+                      }`}
                     >
                       <img
                         src={badge.image}
@@ -292,20 +313,21 @@ export default function BadgePickerModal({
             </TabsContent>
           ))}
         </Tabs>
-        <DialogFooter className="sm:justify-start grid! grid-cols-2 gap-3 py-2">
-          {SELECTED_BADGES.map((badge, idx) => (
+        <DialogFooter className="sm:justify-start grid! grid-cols-4 gap-3 py-2">
+          {editorStore.badges.map((badge, idx) => (
             <div className="relative">
-              <Badge
+              <BadgeComponent
                 variant={"secondary"}
                 className="flex items-center justify-center p-2.5 w-full!"
                 key={idx}
               >
                 <img src={badge.image} alt={badge.name} className="h-5" />
-              </Badge>
+              </BadgeComponent>
               <Button
                 variant={"secondary"}
                 size={"icon-xs"}
                 className="absolute -right-1 -top-5 hover:bg-destructive hover:text-destructive-foreground rounded-full"
+                onClick={() => editorStore.removeBadge(badge.image)}
               >
                 <X />
               </Button>

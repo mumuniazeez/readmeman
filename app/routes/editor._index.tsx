@@ -11,6 +11,7 @@ import EditorPanel from "~/components/editor/EditorPanel";
 import { ScrollArea, ScrollBar } from "~/components/ui/scroll-area";
 import { useState } from "react";
 import PreviewPanel from "~/components/editor/PreviewPanel";
+import { useEditorStore } from "~/stores/useEditorStore";
 
 export function meta({}: Route.MetaArgs): Route.MetaDescriptors {
   return [
@@ -25,6 +26,24 @@ export function meta({}: Route.MetaArgs): Route.MetaDescriptors {
 
 export default function Editor() {
   const [copied, setCopied] = useState(false);
+
+  const editorStore = useEditorStore();
+
+  const handleDownload = () => {
+    const element = document.createElement("a");
+    const file = new Blob([editorStore.markdown], { type: "text/markdown" });
+    element.href = URL.createObjectURL(file);
+    element.download = "README.md";
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+  };
+
+  const handleCopy = async () => {
+    await navigator.clipboard.writeText(editorStore.markdown);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
   return (
     <div className="h-screen flex flex-col">
       <header className="flex items-center justify-between border-b border-zinc-800 py-2 px-10">
@@ -35,19 +54,19 @@ export default function Editor() {
             </h1>
           </Link>
         </div>
-        <div className="flex items-center justify-between gap-x-2">
+        {/* <div className="flex items-center justify-between gap-x-2">
           <div className="w-2 h-2 bg-green-400 rounded-full"></div>
           <p className="font-mono text-sm text-green-400">Saved to browser</p>
-        </div>
+        </div> */}
         <div className="space-x-3">
-          <Button variant={"ghost"}>
+          {/* <Button variant={"ghost"}>
             <UploadIcon />
             <span> Upload Screenshot</span>
           </Button>
           <Button variant={"ghost"}>
             <Share2 />
             <span>Share</span>
-          </Button>
+          </Button> */}
         </div>
       </header>
       <div className="editor-container flex flex-1 overflow-hidden">
@@ -59,18 +78,18 @@ export default function Editor() {
               </div>
               <div className="border-t border-[#2A2A2E] bg-[#0E0E0F] p-4 flex items-center justify-between">
                 <span className="text-xs text-[#55555E] font-mono">
-                  102 chars
+                  {editorStore.markdown.length} Chars
                 </span>
                 <div className="flex gap-2">
                   <Button
-                    // onClick={handleDownload}
+                    onClick={handleDownload}
                     className="bg-[#5B6CFF] hover:bg-[#7B8AFF]"
                   >
                     <Download className="w-4 h-4 mr-2" />
                     Download .md
                   </Button>
                   <Button
-                    // onClick={handleCopy}
+                    onClick={handleCopy}
                     variant="ghost"
                     className="border border-[#2A2A2E]"
                   >

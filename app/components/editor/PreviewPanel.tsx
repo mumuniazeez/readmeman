@@ -1,105 +1,136 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import Markdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
+import { useEditorStore } from "~/stores/useEditorStore";
+import type { TemplateData } from "~/template";
 
 export default function PreviewPanel() {
-  const markdown = `<div align="center">
-  <img src="https://via.placeholder.com/150" alt="Project Logo" width="150" height="150" />
-  <h1>✨ Project Title ✨</h1>
-  <p>A short and catchy description of your amazing project.</p>
+  const editorStore = useEditorStore();
 
-  <!-- Badges -->
-  <p>
-    <img src="https://img.shields.io/badge/version-1.0.0-blue.svg" alt="Version" />
-    <img src="https://img.shields.io/badge/license-MIT-green.svg" alt="License" />
-    <img src="https://img.shields.io/badge/build-passing-brightgreen.svg" alt="Build" />
-  </p>
+  const {
+    markdown,
+    aboutProject,
+    acknowledgements,
+    badges,
+    codeExample,
+    contributing,
+    description,
+    features,
+    includeCodeExample,
+    installation,
+    license,
+    logoUrl,
+    prerequisites,
+    projectName,
+    techStack,
+    usageInstallation,
+  } = editorStore;
+
+  const data: TemplateData = {
+    aboutProject,
+    acknowledgements,
+    badges,
+    codeExample,
+    contributing,
+    description,
+    features,
+    includeCodeExample,
+    installation,
+    license,
+    logoUrl,
+    prerequisites,
+    projectName,
+    techStack,
+    usageInstallation,
+  };
+
+  const generateMarkdown = (
+    state: ReturnType<typeof useEditorStore.getState>,
+  ) => {
+    const template = `
+# ${state.projectName}
+-----
+${state.description}
+
+${state.logoUrl ? `![Project Logo](${state.logoUrl})` : ""}
+
+${state.aboutProject}
+
+<div align="center" class="flex flex-wrap">
+  ${state.badges.map(
+    (badge) => `<img src="${badge.image}" alt="${badge.name}" />`,
+  )}
 </div>
 
----
+## 🚀 Features
 
-## 📖 Table of Contents
+${state.features
+  .map(
+    (feature) => `
+- ${feature} 
+`,
+  )
+  .join("\n")}
 
-- [About the Project](#about-the-project)
-- [Features](#features)
-- [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
-- [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
-- [Contact](#contact)
+## 🛠 Tech Stack
 
-## 🚀 About the Project
+${state.techStack
+  .map(
+    (tech) => `
+- ${tech.icon} ${tech.name} 
+`,
+  )
+  .join("\n")}
 
-Provide a more detailed introduction to your project. What problem does it solve? Why did you build it? What makes it stand out from other similar tools?
+## 📋 Prerequisites
 
-You can include screenshots or GIFs here to show what your project looks like in action.
+${state.prerequisites}
 
-## ✨ Features
+## 📦 Installation
 
-- **Feature 1:** Description of feature 1.
-- **Feature 2:** Description of feature 2.
-- **Feature 3:** Description of feature 3.
-
-## 🛠 Getting Started
-
-To get a local copy up and running, follow these simple steps.
-
-### Prerequisites
-
-List any prerequisites, libraries, or tools required before installing the project. For example:
-- Node.js (v14 or higher)
-- npm or yarn
-
-### Installation
-
-1. Clone the repository
-   \`\`\`sh
-   git clone https://github.com/yourusername/project-name.git
-   \`\`\`
-2. Navigate to the project directory
-   \`\`\`sh
-   cd project-name
-   \`\`\`
-3. Install dependencies
-   \`\`\`sh
-   npm install
-   \`\`\`
+${state.installation}
 
 ## 💻 Usage
 
-Show examples of how your project can be used. Include code snippets or command-line examples.
+${"```\n" + state.usageInstallation + "\n```"}
 
-\`\`\`javascript
-import { MyAwesomeComponent } from 'my-awesome-library';
 
-function App() {
-  return <MyAwesomeComponent title="Hello World!" />;
-}
-\`\`\`
+${state.includeCodeExample ? "```\n" + state.codeExample + "\n```" : ""}
+
 
 ## 🤝 Contributing
 
-Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
-
-1. Fork the Project
-2. Create your Feature Branch (\`git checkout -b feature/AmazingFeature\`)
-3. Commit your Changes (\`git commit -m 'Add some AmazingFeature'\`)
-4. Push to the Branch (\`git push origin feature/AmazingFeature\`)
-5. Open a Pull Request
+${state.contributing}
 
 ## 📄 License
 
-Distributed under the MIT License. See \`LICENSE\` for more information.
+${state.license}
 
-## 📬 Contact
+## 🌟 Acknowledgements
 
-Your Name - [@yourtwitter](https://twitter.com/yourtwitter) - email@example.com
+${state.acknowledgements
+  .map(
+    (ack) => `
+- ${ack}
+`,
+  )
+  .join("\n")}
+    `;
 
-Project Link: [https://github.com/yourusername/project-name](https://github.com/yourusername/project-name)
-`;
+    if (state.markdown !== template) {
+      state.setMarkdown(template);
+    }
+  };
+
+  useEffect(() => {
+    generateMarkdown(useEditorStore.getState());
+    const unsubscribe = useEditorStore.subscribe((state) => {
+      generateMarkdown(state);
+    });
+    return unsubscribe;
+  }, []);
+
   return (
     <div className="h-full flex flex-col">
       <Tabs defaultValue="github">

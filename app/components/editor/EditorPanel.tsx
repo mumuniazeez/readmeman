@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Select,
   SelectContent,
@@ -6,7 +6,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import templates from "~/template";
+import templates, { type TemplateType } from "~/template";
 import {
   Accordion,
   AccordionContent,
@@ -21,19 +21,38 @@ import { Plus, X } from "lucide-react";
 import { Textarea } from "../ui/textarea";
 import BadgePickerModal from "./BadgePickerModal";
 import { Switch } from "../ui/switch";
+import { useEditorStore } from "~/stores/useEditorStore";
+import { Badge } from "../ui/badge";
 
 export default function EditorPanel() {
+  const editorStore = useEditorStore();
+
+  const switchTemplate = (type: TemplateType) => {
+    editorStore.setTemplateType(type);
+    editorStore.setTemplateData(
+      templates.find((template) => template.type === type)!.data,
+    );
+  };
+
+  useEffect(() => {
+    switchTemplate("blank");
+  }, []);
+
   return (
     <div className="w-full h-full flex flex-col gap-y-4">
       <div className="w-full">
         <Label className="text-sm font-mono text-zinc-400">Template</Label>
-        <Select defaultValue={"blank"}>
+        <Select
+          defaultValue={"blank"}
+          value={editorStore.templateType}
+          onValueChange={(val: TemplateType) => switchTemplate(val)}
+        >
           <SelectTrigger className="w-full h-10!">
             <SelectValue placeholder="Select a template" />
           </SelectTrigger>
           <SelectContent className="h-fit">
             {templates.map((template) => (
-              <SelectItem value={template.key} key={template.key}>
+              <SelectItem value={template.type} key={template.type}>
                 <div className="flex flex-col items-start">
                   <h6 className="font-bold text-md">{template.title}</h6>
                   <p className="font-mono">{template.description}</p>
@@ -47,7 +66,7 @@ export default function EditorPanel() {
         <Accordion
           type="multiple"
           className="space-y-3 border-none"
-          defaultValue={["header",  "about"]}
+          defaultValue={["header", "about"]}
         >
           {/* Project Header */}
           <AccordionItem
@@ -68,6 +87,8 @@ export default function EditorPanel() {
                   <Input
                     placeholder="my-awesome-project"
                     className="h-9 bg-[#1E1E21] border-[#2A2A2E] "
+                    value={editorStore.projectName}
+                    onChange={(e) => editorStore.setProjectName(e.target.value)}
                   />
                 </FieldGroup>
                 <FieldGroup>
@@ -77,6 +98,8 @@ export default function EditorPanel() {
                   <Input
                     placeholder="A very awesome project"
                     className="h-9 bg-[#1E1E21] border-[#2A2A2E] "
+                    value={editorStore.description}
+                    onChange={(e) => editorStore.setDescription(e.target.value)}
                   />
                 </FieldGroup>
                 <FieldGroup>
@@ -86,6 +109,8 @@ export default function EditorPanel() {
                   <Input
                     placeholder="https://example.com/logo.png"
                     className="h-9 bg-[#1E1E21] border-[#2A2A2E] "
+                    value={editorStore.logoUrl}
+                    onChange={(e) => editorStore.setLogoUrl(e.target.value)}
                   />
                 </FieldGroup>
               </Field>
@@ -102,6 +127,27 @@ export default function EditorPanel() {
               </div>
             </AccordionTrigger>
             <AccordionContent className="px-4 pb-4 border-t border-[#2A2A2E] space-y-3 h-fit pt-3">
+              <div className="justify-start grid! grid-cols-4 gap-3 py-2">
+                {editorStore.badges.map((badge, idx) => (
+                  <div className="relative">
+                    <Badge
+                      variant={"secondary"}
+                      className="flex items-center justify-center p-2.5 w-full!"
+                      key={idx}
+                    >
+                      <img src={badge.image} alt={badge.name} className="h-5" />
+                    </Badge>
+                    <Button
+                      variant={"secondary"}
+                      size={"icon-xs"}
+                      className="absolute -right-1 -top-5 hover:bg-destructive hover:text-destructive-foreground rounded-full"
+                      onClick={() => editorStore.removeBadge(badge.image)}
+                    >
+                      <X />
+                    </Button>
+                  </div>
+                ))}
+              </div>
               <BadgePickerModal>
                 <Button className="w-full" variant={"secondary"}>
                   <Plus /> Add Badges
@@ -123,6 +169,8 @@ export default function EditorPanel() {
               <Textarea
                 className="bg-[#1E1E21] border-[#2A2A2E] "
                 placeholder="A quite long description of your project...."
+                value={editorStore.aboutProject}
+                onChange={(e) => editorStore.setAboutProject(e.target.value)}
               />
             </AccordionContent>
           </AccordionItem>
@@ -138,30 +186,33 @@ export default function EditorPanel() {
             </AccordionTrigger>
             <AccordionContent className="px-4 pb-4 border-t border-[#2A2A2E] space-y-3 h-fit pt-3">
               <Field>
-                <FieldGroup>
-                  <div className="flex items-center justify-center gap-x-2">
-                    <Input
-                      placeholder="A very cool Feature"
-                      className="h-9 bg-[#1E1E21] border-[#2A2A2E]"
-                    />
-                    <Button>
-                      <X />
-                    </Button>
-                  </div>
-                </FieldGroup>
-                <FieldGroup>
-                  <div className="flex items-center justify-center gap-x-2">
-                    <Input
-                      placeholder="A very cool Feature"
-                      className="h-9 bg-[#1E1E21] border-[#2A2A2E]"
-                    />
-                    <Button>
-                      <X />
-                    </Button>
-                  </div>
-                </FieldGroup>
+                {editorStore.features.map((feature, idx) => (
+                  <FieldGroup>
+                    <div className="flex items-center justify-center gap-x-2">
+                      <Input
+                        placeholder="A very cool Feature"
+                        value={feature}
+                        onChange={(e) =>
+                          editorStore.updateFeature(idx, e.target.value)
+                        }
+                        className="h-9 bg-[#1E1E21] border-[#2A2A2E]"
+                      />
+                      <Button
+                        size={"icon"}
+                        variant={"secondary"}
+                        onClick={() => editorStore.removeFeature(idx)}
+                      >
+                        <X />
+                      </Button>
+                    </div>
+                  </FieldGroup>
+                ))}
               </Field>
-              <Button className="w-full" variant={"secondary"}>
+              <Button
+                className="w-full"
+                variant={"secondary"}
+                onClick={() => editorStore.addFeature("")}
+              >
                 <Plus /> Add Feature
               </Button>
             </AccordionContent>
@@ -178,38 +229,46 @@ export default function EditorPanel() {
             </AccordionTrigger>
             <AccordionContent className="px-4 pb-4 border-t border-[#2A2A2E] space-y-3 h-fit pt-3">
               <Field>
-                <FieldGroup>
-                  <div className="flex items-center justify-center gap-x-2">
-                    <Input
-                      placeholder="Icon"
-                      className="h-9 bg-[#1E1E21] border-[#2A2A2E] w-20"
-                    />
-                    <Input
-                      placeholder="ReactJS"
-                      className="h-9 bg-[#1E1E21] border-[#2A2A2E]"
-                    />
-                    <Button>
-                      <X />
-                    </Button>
-                  </div>
-                </FieldGroup>
-                <FieldGroup>
-                  <div className="flex items-center justify-center gap-x-2">
-                    <Input
-                      placeholder="Icon"
-                      className="h-9 bg-[#1E1E21] border-[#2A2A2E] w-20"
-                    />
-                    <Input
-                      placeholder="ReactJS"
-                      className="h-9 bg-[#1E1E21] border-[#2A2A2E]"
-                    />
-                    <Button>
-                      <X />
-                    </Button>
-                  </div>
-                </FieldGroup>
+                {editorStore.techStack.map((techStack, idx) => (
+                  <FieldGroup>
+                    <div className="flex items-center justify-center gap-x-2">
+                      <Input
+                        placeholder="Icon"
+                        value={techStack.icon}
+                        onChange={(e) =>
+                          editorStore.updateTechStack(idx, {
+                            icon: e.target.value,
+                            name: techStack.name,
+                          })
+                        }
+                        className="h-9 bg-[#1E1E21] border-[#2A2A2E] w-20"
+                      />
+                      <Input
+                        placeholder="ReactJS"
+                        value={techStack.name}
+                        onChange={(e) =>
+                          editorStore.updateTechStack(idx, {
+                            icon: techStack.icon,
+                            name: e.target.value,
+                          })
+                        }
+                        className="h-9 bg-[#1E1E21] border-[#2A2A2E]"
+                      />
+                      <Button
+                        onClick={() => editorStore.removeTechStack(idx)}
+                        variant={"secondary"}
+                      >
+                        <X />
+                      </Button>
+                    </div>
+                  </FieldGroup>
+                ))}
               </Field>
-              <Button className="w-full" variant={"secondary"}>
+              <Button
+                className="w-full"
+                variant={"secondary"}
+                onClick={() => editorStore.addTechStack({ icon: "", name: "" })}
+              >
                 <Plus /> Add Tech Stack
               </Button>
             </AccordionContent>
@@ -232,6 +291,10 @@ export default function EditorPanel() {
                   </Label>
                   <Textarea
                     className="bg-[#1E1E21] border-[#2A2A2E] "
+                    value={editorStore.prerequisites}
+                    onChange={(e) =>
+                      editorStore.setPrerequisites(e.target.value)
+                    }
                     placeholder="e.g Nodejs, Python, Docker, etc...."
                   />
                 </FieldGroup>
@@ -240,7 +303,11 @@ export default function EditorPanel() {
                     Installation
                   </Label>
                   <Textarea
-                    className="bg-[#1E1E21] border-[#2A2A2E] "
+                    className="bg-[#1E1E21] border-[#2A2A2E]"
+                    value={editorStore.installation}
+                    onChange={(e) =>
+                      editorStore.setInstallation(e.target.value)
+                    }
                     placeholder="e.g npm install"
                   />
                 </FieldGroup>
@@ -266,23 +333,38 @@ export default function EditorPanel() {
                   <Textarea
                     className="bg-[#1E1E21] border-[#2A2A2E] "
                     placeholder="e.g npm install"
+                    value={editorStore.usageInstallation}
+                    onChange={(e) =>
+                      editorStore.setUsageInstallation(e.target.value)
+                    }
                   />
                 </FieldGroup>
                 <FieldGroup className="flex-row">
-                  <Switch />
+                  <Switch
+                    checked={editorStore.includeCodeExample}
+                    onCheckedChange={(checked) => {
+                      editorStore.setIncludeCodeExample(checked);
+                    }}
+                  />
                   <Label className="text-xs text-zinc-400 font-mono">
                     Include code example?
                   </Label>
                 </FieldGroup>
-                <FieldGroup>
-                  <Label className="text-xs text-zinc-400 font-mono">
-                    Code Example
-                  </Label>
-                  <Textarea
-                    className="bg-[#1E1E21] border-[#2A2A2E] "
-                    placeholder="const example = 'code here'"
-                  />
-                </FieldGroup>
+                {editorStore.includeCodeExample && (
+                  <FieldGroup>
+                    <Label className="text-xs text-zinc-400 font-mono">
+                      Code Example
+                    </Label>
+                    <Textarea
+                      className="bg-[#1E1E21] border-[#2A2A2E] "
+                      value={editorStore.codeExample}
+                      onChange={(e) =>
+                        editorStore.setCodeExample(e.target.value)
+                      }
+                      placeholder="const example = 'code here'"
+                    />
+                  </FieldGroup>
+                )}
               </Field>
             </AccordionContent>
           </AccordionItem>
@@ -302,6 +384,10 @@ export default function EditorPanel() {
                   <Textarea
                     className="bg-[#1E1E21] border-[#2A2A2E] "
                     placeholder="Contributions are welcome! Please open an issue first to discuss what you would like to change."
+                    value={editorStore.contributing}
+                    onChange={(e) =>
+                      editorStore.setContributing(e.target.value)
+                    }
                   />
                 </FieldGroup>
               </Field>
@@ -323,6 +409,8 @@ export default function EditorPanel() {
                   <Input
                     placeholder="MIT"
                     className="h-9 bg-[#1E1E21] border-[#2A2A2E]"
+                    value={editorStore.license}
+                    onChange={(e) => editorStore.setLicense(e.target.value)}
                   />
                 </FieldGroup>
               </Field>
@@ -340,14 +428,31 @@ export default function EditorPanel() {
             </AccordionTrigger>
             <AccordionContent className="px-4 pb-4 border-t border-[#2A2A2E] space-y-3 h-fit pt-3">
               <Field>
-                <FieldGroup>
-                  <Input
-                    placeholder="Acknowledgement"
-                    className="h-9 bg-[#1E1E21] border-[#2A2A2E]"
-                  />
-                </FieldGroup>
+                {editorStore.acknowledgements.map((acknowledgement, idx) => (
+                  <div className="flex items-center justify-center gap-x-2">
+                    <Input
+                      placeholder="A very cool Feature"
+                      value={acknowledgement}
+                      onChange={(e) =>
+                        editorStore.updateAcknowledgement(idx, e.target.value)
+                      }
+                      className="h-9 bg-[#1E1E21] border-[#2A2A2E]"
+                    />
+                    <Button
+                      size={"icon"}
+                      variant={"secondary"}
+                      onClick={() => editorStore.removeAcknowledgement(idx)}
+                    >
+                      <X />
+                    </Button>
+                  </div>
+                ))}
               </Field>
-              <Button className="w-full" variant={"secondary"}>
+              <Button
+                className="w-full"
+                variant={"secondary"}
+                onClick={() => editorStore.addAcknowledgement("")}
+              >
                 <Plus /> Add Acknowledgement
               </Button>
             </AccordionContent>
