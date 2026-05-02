@@ -12,6 +12,10 @@ This project allows you to generate to generate readme files through `form`. You
   <img src="https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white" alt="TypeScript" /> <img src="https://img.shields.io/badge/React-20232A?logo=react&logoColor=61DAFB" alt="React" /> <img src="https://img.shields.io/badge/Node.js-43853D?logo=node.js&logoColor=white" alt="Node.js" /> <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="MIT License" />
 </div>
 
+## AI Usage
+
+AI was used in this project to assist me (code completion, bug fixes). With that beign said **Most of the code was written by me**
+
 ## 🚀 Features
 
 - Rich Markdown Display
